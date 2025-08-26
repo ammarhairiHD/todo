@@ -2,16 +2,14 @@ import type { FastifyRequest, FastifyReply } from "fastify";
 import type { task } from "../types/task";
 import jwt from "jsonwebtoken";
 import taskModel from "../models/task.model";
-import userModel from "../models/user.model";
-import { Schema } from "mongoose";
 
 export async function getTaskController(
   req: FastifyRequest,
   rep: FastifyReply
 ) {
   try {
-    const checkAuth = req.headers.authorization;
-    const token = checkAuth?.split(" ")[1];
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.split(" ")[1];
 
     if (!token) {
       return rep.status(401).send({
@@ -33,7 +31,8 @@ export async function getTaskController(
 
     rep.send(taskData);
   } catch (err) {
-    rep.send("Server Error");
+    console.error(err);
+    rep.status(500).send({ message: "Server Error" });
   }
 }
 
@@ -42,11 +41,11 @@ export async function createTaskController(
   rep: FastifyReply
 ) {
   try {
-    const checkAuth = req.headers.authorization;
-    const token = checkAuth?.split(" ")[1];
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.split(" ")[1];
 
     if (!token) {
-      return rep.send({
+      return rep.status(401).send({
         message: "Token is not valid, please sign out and the sign in again",
       });
     }
@@ -65,6 +64,7 @@ export async function createTaskController(
 
     rep.status(200).send({ message: "task created" });
   } catch (err) {
+    console.error(err);
     rep.status(500).send({ message: "Couldn't create new task" });
   }
 }
@@ -93,6 +93,31 @@ export async function updateTask(req: FastifyRequest, rep: FastifyReply) {
 
     rep.send({ message: "Tasks updated!", updateTask });
   } catch (err) {
-    rep.status(500).send({ message: "Couldn't update tasks" });
+    console.error(err);
+    rep.status(500).send({ message: "Couldn't update task" });
+  }
+}
+
+export async function deleteTask(req: FastifyRequest, rep: FastifyReply) {
+  try {
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.split(" ")[1];
+
+    if (!token) {
+      return rep.status(401).send({ message: "Unauthorized token" });
+    }
+
+    const decoded = jwt.verify(token as string, "secret_key") as { id: string };
+    const { id } = req.params as any;
+    const deleteTask = await taskModel.deleteOne({ _id: id, user: decoded.id });
+
+    if (deleteTask.deletedCount === 0) {
+      return rep.status(404).send({ message: "Task not found" });
+    }
+
+    rep.send({ message: "Deleted task succesfully", deleteTask });
+  } catch (err) {
+    console.error(err);
+    rep.status(500).send({ message: "Couldn't delete task" });
   }
 }
