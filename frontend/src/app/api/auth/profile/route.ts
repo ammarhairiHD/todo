@@ -12,7 +12,7 @@ export async function GET(req: Request, res: Response) {
     return Response.json(data);
   } catch (err) {
     return Response.json({
-      message: err || "Error receiving user data from backend",
+      message: err,
     });
   }
 }

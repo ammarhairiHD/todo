@@ -1,6 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import AuthForm from "@/components/auth/AuthForm";
 
@@ -10,6 +11,36 @@ export default function Home() {
   const changeCard = () => {
     setShowSignIn((prev) => !prev);
   };
+
+  const router = useRouter();
+
+  const redirectUser = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      const getData = await fetch("/api/auth/profile", {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (getData.ok) {
+        const user = await getData.json();
+        router.push("/dashboard");
+      } else {
+        localStorage.removeItem("token");
+        console.error({ message: "token not provided" });
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    redirectUser();
+  }, []);
 
   async function handleSubmit(
     formType: "signin" | "signup",
@@ -23,7 +54,14 @@ export default function Home() {
           body: JSON.stringify(data),
         });
 
-        return await sendSignIn.json();
+        const result = await sendSignIn.json();
+
+        if (sendSignIn.ok && result.token) {
+          localStorage.setItem("token", result.token);
+          redirectUser();
+        }
+
+        return result;
       } else {
         const sendSignUp = await fetch("/api/auth/signup", {
           method: "POST",
@@ -34,7 +72,6 @@ export default function Home() {
       }
     } catch (err) {
       console.error("Error:", err);
-      throw new Error("Error Sending Data");
     }
   }
 
