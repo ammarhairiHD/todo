@@ -107,7 +107,6 @@ export default function Home() {
           )}
         </AnimatePresence>
       </div>
-      <p>test push</p>
     </section>
   );
 }
