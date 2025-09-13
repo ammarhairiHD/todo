@@ -48,7 +48,7 @@ export default function AuthForm({ formType, onSubmit }: AuthFormProps) {
           {formType === "signup" && (
             <>
               <div className="flex flex-col gap-1">
-                <Label>Username</Label>
+                <Label>Nama panggilan</Label>
                 <Input
                   name="username"
                   type="text"
