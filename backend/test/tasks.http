@@ -1,0 +1,29 @@
+@backendbaselogin = http://127.0.0.1:5000/auth/signin
+@token = {{login.response.body.token}}
+@baseurltask = http://127.0.0.1:5000/tasks/
+
+### Sign In
+# @name login
+POST {{backendbaselogin}}
+Content-Type: application/json
+
+{
+    "email": "halusinasibyammar@gmail.com",
+    "password": "Allahyang1@"
+}
+
+### Get All Tasks
+GET {{baseurltask}}get-data
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+### Create Task
+POST {{baseurltask}}create-data
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "title": "New Task",
+    "description": "This is a new task created for testing.",
+    "task_status": "todo"
+}

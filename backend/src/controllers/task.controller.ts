@@ -50,7 +50,9 @@ export async function createTaskController(
       });
     }
 
-    const decoded = jwt.verify(token as string, "secret_key") as { id: string };
+    const decoded = jwt.verify(token as string, "secret_key") as {
+      id: string;
+    };
     const { title, description, task_status } = req.body;
 
     const addTask = new taskModel({

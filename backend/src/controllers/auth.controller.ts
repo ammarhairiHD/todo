@@ -22,7 +22,13 @@ export async function signInController(
       return rep.status(400).send({ message: "Wrong Password" });
     }
 
-    const token = jwt.sign({ id: user.id }, "secret_key", { expiresIn: "4h" });
+    const token = jwt.sign(
+      { email: user.email, username: user.username, id: user._id },
+      "secret_key",
+      {
+        expiresIn: "4h",
+      }
+    );
 
     rep.send({ token });
   } catch (err) {
