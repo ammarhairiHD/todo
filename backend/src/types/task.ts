@@ -1,9 +1,13 @@
-let dateType: Date = new Date();
+enum taskStatus {
+  TODO = "todo",
+  INPROGRESS = "inprogress",
+  DONE = "done",
+}
 
 export type task = {
   title: string;
   description: string;
-  task_status: "todo" | "inprogress" | "done";
+  task_status: taskStatus;
   user: any;
   createdAt: Date;
 };

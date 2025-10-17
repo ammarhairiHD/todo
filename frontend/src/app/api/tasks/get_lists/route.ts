@@ -7,7 +7,7 @@ export async function GET(req: Request) {
       return new Response("Unauthorized", { status: 401 });
     }
 
-    const response = await fetch(`${BACKEND_BASE_URL}/tasks/get-data`, {
+    const response = await fetch(`${BACKEND_BASE_URL}tasks/get-data`, {
       method: "GET",
       headers: {
         Authorization: authHeader,

@@ -1,27 +1,39 @@
 "use client";
 
 import getTokenData from "@/lib/auth";
-import { useRouter } from "next/navigation";
-
-interface User {
-  username: string;
-  name: string;
-  email: string;
-}
+import ListTodo from "@/components/todo/ListToDo";
+import ProfileCard from "@/components/dashboard/ProfileCard";
+import AddTask from "@/components/todo/AddTask";
+import { useEffect, useState } from "react";
+import router from "next/router";
+import { TokenData } from "@/types/tokenData";
 
 export default function Dashboard() {
-  const user = getTokenData();
-  const router = useRouter();
-  if (!user) return router.push("/");
+  const [user, setUser] = useState<TokenData | null>(null);
+
+  useEffect(() => {
+    const tokenData = getTokenData();
+    if (tokenData) {
+      setUser({
+        username: tokenData.username,
+        email: tokenData.email,
+      });
+    }
+
+    if (!tokenData) {
+      router.push("/");
+    }
+  }, []);
+
+  if (!user) {
+    return null;
+  }
 
   return (
-    <section className="flex flex-col justify-center items-center min-h-screen bg-gray-900 text-white">
-      <div className="bg-gray-800 p-6 rounded-2xl shadow-lg w-96 text-center">
-        <h1 className="text-2xl font-bold mb-4">Welcome, {user.username} 👋</h1>
-        <p>
-          <span className="font-semibold">Email:</span> {user.email}
-        </p>
-      </div>
+    <section className="flex flex-col items-center min-h-screen bg-gray-900 text-white py-10 px-5">
+      <ProfileCard user={user} />
+      <AddTask user={user} />
+      <ListTodo />
     </section>
   );
 }

@@ -1,3 +1,4 @@
+"use client";
 export function parseJwt(token?: string) {
   if (!token) return null;
 

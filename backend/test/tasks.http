@@ -23,7 +23,7 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "title": "New Task",
-    "description": "This is a new task created for testing.",
+    "title": "Watch Gordon Ramsay Cook Salmon",
+    "description": "Your boy going to cook some salmon",
     "task_status": "todo"
 }
